@@ -91,7 +91,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\ValidateOnLoadBehavior.cs" />
     <Compile Include="Model\DefaultDocument.cs" />
+    <Compile Include="Validation\RequiredNotEmptyValidationRule.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">

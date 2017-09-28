@@ -4,6 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wpf_MongoDB_Test"
+        xmlns:valid="clr-namespace:Wpf_MongoDB_Test.Validation"
+        xmlns:behaviors="clr-namespace:Wpf_MongoDB_Test.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
@@ -16,6 +19,17 @@
             <ColumnDefinition Width="31*"/>
             <ColumnDefinition Width="16*"/>
         </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style x:Key="txtValidated" TargetType="{x:Type TextBox}">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                            Path=(Validation.Errors)[0].ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <valid:RequiredNotEmptyValidationRule x:Key="RequiredNotEmptyValidationRule"/>
+        </Grid.Resources>
         <ListView ItemsSource="{Binding Docs}" HorizontalContentAlignment="Stretch" >
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -48,8 +62,19 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <TextBox Grid.Column="1" Height="23" Margin="10,31,10,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="0" Text="{Binding NewName}"/>
         <TextBlock Grid.Column="1" Margin="10,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Imię"/>
+        <TextBox Grid.Column="1" Height="23" Margin="10,31,10,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="0" Style="{StaticResource ResourceKey=txtValidated}" >
+            <TextBox.Text>
+                <Binding Path="NewName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <StaticResource ResourceKey="RequiredNotEmptyValidationRule" />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+            <i:Interaction.Behaviors>
+                <behaviors:ValidateOnLoadBehavior/>
+            </i:Interaction.Behaviors>
+        </TextBox>
         <TextBlock Grid.Column="1" Margin="10,71,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Nazwisko"/>
         <TextBox Grid.Column="1" Height="23" Margin="10,92,10,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="1" Text="{Binding NewSurname}"/>
         <StackPanel Grid.Column="1" Margin="10,130,10,0" VerticalAlignment="Top">

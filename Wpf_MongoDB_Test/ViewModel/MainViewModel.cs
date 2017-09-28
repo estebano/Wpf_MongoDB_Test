@@ -40,6 +40,10 @@ namespace Wpf_MongoDB_Test.ViewModel
             }
             set
             {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("Imie jest wymagane.");
+                }
                 _newName = value;
                 RaisePropertyChanged(() => NewName); }
         }
