@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Wpf_MongoDB_Test.Model;
@@ -23,6 +25,37 @@ namespace Wpf_MongoDB_Test.ViewModel
     {
         protected static IMongoClient _client;
         protected static IMongoDatabase _db;
+        protected static IMongoCollection<DefaultDocument> _collection;
+
+        public ICommand AddNewCommand { get; set; }
+
+        private string _newName;
+        private string _newSurname;
+
+        public string NewName
+        {
+            get
+            {
+                return _newName;
+            }
+            set
+            {
+                _newName = value;
+                RaisePropertyChanged(() => NewName); }
+        }
+
+        public string NewSurname
+        {
+            get
+            {
+                return _newSurname;
+            }
+            set
+            {
+                _newSurname = value;
+                RaisePropertyChanged(() => NewSurname);
+            }
+        }
 
         public ObservableCollection<DefaultDocument> Docs { get; set; }
 
@@ -39,12 +72,50 @@ namespace Wpf_MongoDB_Test.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
+            InitCommands();
 
             _client = new MongoClient();
             _db = _client.GetDatabase("est");
+            _collection = _db.GetCollection<DefaultDocument>("default");
             InitCollections();
             FetchData();
 
+        }
+
+        private void InitCommands()
+        {
+            AddNewCommand = new RelayCommand(TryAddNew);
+        }
+
+        private void TryAddNew()
+        {
+            try
+            {
+                AddNew();
+
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+            }
+        }
+
+        private void LogException(Exception ex)
+        {
+            //// TODO: Implement exceptions logging
+        }
+
+        private async void AddNew()
+        {
+            await _collection.InsertOneAsync(new DefaultDocument() {  Name = NewName, Surname = NewSurname});
+            ClearInputs();
+            FetchData();
+        }
+
+        private void ClearInputs()
+        {
+            NewName = string.Empty;
+            NewSurname = string.Empty;
         }
 
         private void InitCollections()
@@ -54,9 +125,10 @@ namespace Wpf_MongoDB_Test.ViewModel
 
         private async void FetchData()
         {
-            var collection = _db.GetCollection<DefaultDocument>("default");
+            Docs.Clear();
+
             var filter = Builders<DefaultDocument>.Filter.Empty;
-            using (var cursor = await collection.FindAsync(filter))
+            using (var cursor = await _collection.FindAsync(filter))
             {
                 while (await cursor.MoveNextAsync())
                 {
