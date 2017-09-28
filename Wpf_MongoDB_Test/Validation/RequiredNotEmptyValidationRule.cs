@@ -8,6 +8,10 @@ using System.Windows.Controls;
 
 namespace Wpf_MongoDB_Test.Validation
 {
+
+    /// <summary>
+    /// See https://www.codeproject.com/Articles/1069135/Dynamic-Validation-with-FluentValidation-in-WPF-MV
+    /// </summary>
     public class RequiredNotEmptyValidationRule : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)

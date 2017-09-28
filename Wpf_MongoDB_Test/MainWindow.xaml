@@ -16,8 +16,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="31*"/>
-            <ColumnDefinition Width="16*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="176"/>
         </Grid.ColumnDefinitions>
         <Grid.Resources>
             <Style x:Key="txtValidated" TargetType="{x:Type TextBox}">
