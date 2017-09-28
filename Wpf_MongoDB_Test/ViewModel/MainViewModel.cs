@@ -54,8 +54,8 @@ namespace Wpf_MongoDB_Test.ViewModel
 
         private async void FetchData()
         {
-            var collection = _db.GetCollection<BsonDocument>("default");
-            var filter = new BsonDocument();
+            var collection = _db.GetCollection<DefaultDocument>("default");
+            var filter = Builders<DefaultDocument>.Filter.Empty;
             using (var cursor = await collection.FindAsync(filter))
             {
                 while (await cursor.MoveNextAsync())
@@ -63,13 +63,7 @@ namespace Wpf_MongoDB_Test.ViewModel
                     var batch = cursor.Current;
                     foreach (var item in batch)
                     {
-                        var ddoc = new DefaultDocument()
-                        {
-                            Id = item.GetElement("_id").Value.AsObjectId.ToString(),
-                            Name = item.GetElement("name").Value.AsString,
-                            Surname = item.GetElement("surname").Value.AsString
-                        };
-                        Docs.Add(ddoc);
+                        Docs.Add(item);
                     }
                 }
             }
